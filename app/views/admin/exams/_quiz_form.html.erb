@@ -1,0 +1,18 @@
+<%= form_with url: attempt_admin_exam_path(exam), method: :post do %>
+  <% exam.questions.each do |question| %>
+    <div>
+      <strong><%= question.question_text %></strong><br>
+      <%= radio_button_tag "answers[#{question.id}]", question.option_a %>
+      <%= label_tag "answers[#{question.id}]", question.option_a %><br>
+      <%= radio_button_tag "answers[#{question.id}]", question.option_b %>
+      <%= label_tag "answers[#{question.id}]", question.option_b %><br>
+      <%= radio_button_tag "answers[#{question.id}]", question.option_c %>
+      <%= label_tag "answers[#{question.id}]", question.option_c %><br>
+      <%= radio_button_tag "answers[#{question.id}]", question.option_d %>
+      <%= label_tag "answers[#{question.id}]", question.option_d %><br>
+    </div>
+  <% end %>
+
+  <%= hidden_field_tag :exam_id, exam.id %>
+  <%= submit_tag "Submit Exam" %>
+<% end %>

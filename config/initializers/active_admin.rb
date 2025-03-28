@@ -6,6 +6,21 @@ ActiveAdmin.setup do |config|
   #
   config.site_title = "Online Exam"
 
+  # Admin User Authentication (for Devise)
+  config.authentication_method = :authenticate_admin!
+  config.authentication_method = :authenticate_admin_or_student!
+  config.current_user_method   = :current_user
+  config.logout_link_method    = :delete
+
+  # Define Current Admin User
+  config.current_user_method = :current_user
+
+  # Authorization for Admin Access
+  def authenticate_admin!
+    redirect_to new_user_session_path unless current_user&.admin?
+  end
+
+
   # Set the link url for the title. For example, to take
   # users to your main site. Defaults to no link.
   #

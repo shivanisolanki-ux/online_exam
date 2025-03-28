@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_24_173428) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_27_093626) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -33,18 +33,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_24_173428) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
   create_table "exams", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.string "exam_title"
     t.integer "subject_id", null: false
-    t.integer "score"
+    t.integer "total_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["subject_id"], name: "index_exams_on_subject_id"
-    t.index ["user_id"], name: "index_exams_on_user_id"
+  end
+
+  create_table "meetings", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "title"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_meetings_on_user_id"
   end
 
   create_table "notices", force: :cascade do |t|
@@ -56,15 +65,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_24_173428) do
 
   create_table "questions", force: :cascade do |t|
     t.integer "subject_id", null: false
+    t.integer "exam_id", null: false
     t.text "question_text"
-    t.string "answer"
-    t.string "option1"
-    t.string "option2"
-    t.string "option3"
-    t.string "option4"
+    t.string "option_a"
+    t.string "option_b"
+    t.string "option_c"
+    t.string "option_d"
+    t.string "correct_answer"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["exam_id"], name: "index_questions_on_exam_id"
     t.index ["subject_id"], name: "index_questions_on_subject_id"
+  end
+
+  create_table "results", force: :cascade do |t|
+    t.integer "admin_user_id", null: false
+    t.integer "exam_id", null: false
+    t.integer "score"
+    t.integer "total_questions"
+    t.integer "correct_answers"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_user_id"], name: "index_results_on_admin_user_id"
+    t.index ["exam_id"], name: "index_results_on_exam_id"
   end
 
   create_table "students", force: :cascade do |t|
@@ -94,7 +117,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_24_173428) do
   end
 
   add_foreign_key "exams", "subjects"
-  add_foreign_key "exams", "users"
+  add_foreign_key "meetings", "users"
+  add_foreign_key "questions", "exams"
   add_foreign_key "questions", "subjects"
+  add_foreign_key "results", "admin_users"
+  add_foreign_key "results", "exams"
   add_foreign_key "students", "users"
 end

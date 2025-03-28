@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  admin_user: one
+  exam: one
+  score: 1
+  total_questions: 1
+  correct_answers: 1
+
+two:
+  admin_user: two
+  exam: two
+  score: 1
+  total_questions: 1
+  correct_answers: 1

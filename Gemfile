@@ -70,4 +70,4 @@ gem "sassc-rails"
 gem 'jbuilder'
 gem 'rack-cors'
 gem 'arctic_admin'
-
+gem 'byebug'
