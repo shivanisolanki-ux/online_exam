@@ -67,26 +67,16 @@ ActiveAdmin.register Exam do
     actions unless current_admin_user.student? # Hide action buttons for students
   end
 
-  form do |f|
-    f.inputs 'Exam Details' do
-      f.input :exam_title
-      f.input :subject
-      f.input :total_score, label: "Total Score"
-
-      # Multi-select for questions with Slim Select
-      f.input :question_ids,
-              as: :select,
-              collection: Question.all.collect { |q| [q.question_text, q.id] },
-              input_html: {
-                multiple: true,
-                id: 'exam_question_ids',
-                class: 'slim-select',
-                'data-placeholder': 'Select Questions...'
-              }
-
-    end
-    f.actions
+ form do |f|
+  f.inputs 'Exam Details' do
+    f.input :exam_title
+    f.input :total_score, label: "Total Score"
+    f.input :questions,
+            as: :check_boxes,
+            collection: Question.all.collect { |q| ["Q#{q.id}. #{q.question_text}", q.id] }
   end
+  f.actions
+end
 
 
 
@@ -98,7 +88,7 @@ ActiveAdmin.register Exam do
       end
       row :total_score
       row :total_questions do |exam|
-        exam.questions.count # Display the number of questions
+        exam.questions.count 
       end
      
     end
@@ -120,3 +110,4 @@ ActiveAdmin.register Exam do
 
 
 end
+
