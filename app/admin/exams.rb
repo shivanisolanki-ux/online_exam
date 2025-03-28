@@ -35,12 +35,8 @@ ActiveAdmin.register Exam do
       exam.questions.each do |question|
         correct_answers += 1 if answers[question.id.to_s] == question.correct_answer
       end
-
-      # Calculate score based on correct answers
       score_per_question = exam.total_score.to_f / total_questions
       score = correct_answers * score_per_question
-
-      # Store the result
       Result.create!(
         admin_user: student,
         exam: exam,
@@ -55,16 +51,18 @@ ActiveAdmin.register Exam do
   end
 
   index do
-    selectable_column unless current_admin_user.student? # Hide selection checkbox for students
+    selectable_column unless current_admin_user.student? 
     id_column
     column :exam_title
-    column :subject
+    column :questions do |exam|
+      exam.questions.pluck(:id, :question_text)
+    end
     column :total_score
     column :total_questions do |exam|
-      exam.questions.count # Display the number of questions
+      exam.questions.count 
     end
 
-    actions unless current_admin_user.student? # Hide action buttons for students
+    actions unless current_admin_user.student?
   end
 
  form do |f|
