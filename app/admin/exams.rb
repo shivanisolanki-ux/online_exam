@@ -54,23 +54,46 @@ ActiveAdmin.register Exam do
     end
   end
 
+  # index do
+  #   selectable_column unless current_admin_user.student? # Hide selection checkbox for students
+  #   id_column
+  #   column :exam_title
+  #   # column :subject
+  #   column :questions do |exam|
+  #     exam.questions.pluck(:id, :question_text)
+  #   end
+  #   column :total_score
+  #   column :total_questions do |exam|
+  #     exam.questions.count # Display the number of questions
+  #   end
+
+  #   actions unless current_admin_user.student? # Hide action buttons for students
+  # end
   index do
-    selectable_column unless current_admin_user.student? # Hide selection checkbox for students
+    selectable_column
     id_column
     column :exam_title
-    column :subject
-    column :total_score
-    column :total_questions do |exam|
-      exam.questions.count # Display the number of questions
+
+    # Show questions with index
+    column :questions do |exam|
+      if exam.questions.any?
+        content_tag(:ol) do
+          exam.questions.each_with_index.map do |question, index|
+            content_tag(:li, "#{index + 1}. #{question.question_text}")
+          end.join.html_safe
+        end
+      else
+        "No questions available"
+      end
     end
 
-    actions unless current_admin_user.student? # Hide action buttons for students
+    actions
   end
+
 
  form do |f|
   f.inputs 'Exam Details' do
     f.input :exam_title
-    f.input :total_score, label: "Total Score"
     f.input :questions,
             as: :check_boxes,
             collection: Question.all.collect { |q| ["Q#{q.id}. #{q.question_text}", q.id] }
@@ -84,16 +107,15 @@ end
     attributes_table do
       row :exam_title
       row "Questions" do |exam|
-        exam.questions.map(&:question_text).join(", ") # Display all questions as a comma-separated list
+        ol do
+          exam.questions.each_with_index do |question, index|
+            li "Q.#{index + 1} #{question.question_text}"
+          end
+        end
       end
-      row :total_score
-      row :total_questions do |exam|
-        exam.questions.count 
-      end
-     
     end
 
-    panel "Exam Questions attempt" do
+    panel "Exam Question Paper" do
       if current_admin_user.student?
         render partial: 'attempt_exam', locals: { exam: exam }
       else
@@ -107,7 +129,34 @@ end
       end
     end
   end
+  # show do
+  #   attributes_table do
+  #     row :exam_title
+  #     # row "Questions" do |exam|
+  #     #   exam.questions.map(&:question_text).join(", ") # सभी प्रश्नों को कॉमा से अलग करके दिखाए
+  #     # end
+  #     # # row :total_score
+  #     row :total_questions do |exam|
+  #       exam.questions.count
+  #     end
+  #   end
+
+  #   panel "Question Paper" do
+  #     exam.questions.each_with_index do |question, index|
+  #       div "#{index + 1}. #{question.question_text}"
+  #     end
+  #   end
+
+  #   panel "Exam Question Paper" do
+  #     table_for exam.questions do
+  #       column :id
+  #       column :question_text
+  #       column :correct_answer
+  #       column :created_at
+  #       column :updated_at
+  #     end
+  #   end
+  # end
 
 
 end
-
